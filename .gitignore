@@ -1,0 +1,7 @@
+*__pycache__/
+*.csv
+*.log
+*.env
+env
+.idea
+chromedriver
