@@ -15,22 +15,24 @@ class PhoneSiteScript(GeneralClass):
         super().process()
         self.write_csv([], "", "", True)
         list_brands = self.get_list_elements(self.page_content)
-
-        for brand in list_brands:
-            page_brand = self.get_site(list_brands[brand])
-            list_models = self.get_list_elements(page_brand)
-            for model in list_models:
-                self.log.info(model)
-                page_model = self.get_site(list_models[model])
-                list_devices = self.get_list_elements(page_model)
-                for service in list_devices:
-                    self.log.info(service)
-                    page_services = self.get_site(list_devices[service])
-                    if page_services:
-                        list_services = self.get_list_services(page_services)
-                        self.write_csv(list_services, brand, model)
-                    else:
-                        self.write_csv([{'price': 0, 'title': None}], brand, model)
+        try:
+            for brand in list_brands:
+                page_brand = self.get_site(list_brands[brand])
+                list_models = self.get_list_elements(page_brand)
+                for model in list_models:
+                    self.log.info(model)
+                    page_model = self.get_site(list_models[model])
+                    list_devices = self.get_list_elements(page_model)
+                    for service in list_devices:
+                        self.log.info(service)
+                        page_services = self.get_site(list_devices[service])
+                        if page_services:
+                            list_services = self.get_list_services(page_services)
+                            self.write_csv(list_services, brand, model)
+                        else:
+                            self.write_csv([{'price': 0, 'title': None}], brand, model)
+        except Exception as e:
+            self.log.error(str(e))
         return 'PhoneSiteScript terminado'
 
     def get_list_elements(self, soup, class_="transition"):
@@ -69,7 +71,7 @@ class PhoneSiteScript(GeneralClass):
         if first:
             with open('./csv/mundo_movil_precios.csv', 'w', newline='', encoding='utf-8') as csvfile:
                 csvwriter = csv.writer(csvfile)
-                csvwriter.writerow(["servicio", "precio", "marca", "modelo"])
+                csvwriter.writerow(["precio", "servicio", "marca", "modelo"])
         else:
             with open('./csv/mundo_movil_precios.csv', 'a', newline='', encoding='utf-8') as csvfile:
                 csvwriter = csv.writer(csvfile)
